@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,Field
 from typing import Optional
 
+# SignUp model
 class SignUpModel(BaseModel):
     username: str
     email: str
@@ -19,3 +20,18 @@ class SignUpModel(BaseModel):
                 'is_active':False
             }
         }
+
+# To generate token 
+'''
+import secrets 
+secrets.token_hex()
+'''
+# Setting model
+class Settings(BaseModel):
+    # authjwt_secret_key:str = Field(default='8615264fbd0f0b30da7eb5fe12e022b3845ae0a64b0106cbc787374a1fbfc56c')
+    authjwt_secret_key:str = '8615264fbd0f0b30da7eb5fe12e022b3845ae0a64b0106cbc787374a1fbfc56c'
+
+# Login Model
+class LoginModel(BaseModel):
+    username: str
+    password: str

@@ -26,4 +26,4 @@ except Exception as e:
 Base = declarative_base()
 
 # Creates session factory
-Session = sessionmaker()
+Session = sessionmaker(bind=engine)
