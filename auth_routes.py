@@ -15,8 +15,14 @@ auth_router = APIRouter(
 session = Session()
 
 @auth_router.get("/")
-def index():
-    return "Hello, this is a home page of auth router"
+def index(Authorizer:AuthJWT=Depends()):
+    try:
+        Authorizer.jwt_required()
+    except Exception as e:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED,
+                            content={"detail": "Invalid token"})
+    return JSONResponse(status_code=status.HTTP_200_OK,
+                            content="Hello, this is a home page of auth router")
 
 # Singup Route
 @auth_router.post("/signup",status_code=status.HTTP_201_CREATED,
