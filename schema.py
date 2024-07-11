@@ -35,3 +35,20 @@ class Settings(BaseModel):
 class LoginModel(BaseModel):
     username: str
     password: str
+
+# Order Model
+class OrderModel(BaseModel):
+    id:Optional[int]
+    quantity: int
+    order_status : Optional[str] = "pending"
+    pizza_size : Optional[str] = "small"
+
+    class Config:
+        from_attributes =True
+        json_schema_extra = {
+            'example':{
+                'quantity':2,
+                'pizza_size':"large",
+                'order_status':"pending",
+            }
+        }
