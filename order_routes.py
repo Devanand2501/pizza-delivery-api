@@ -77,3 +77,22 @@ def put_order(Authorizer:AuthJWT=Depends()):
         return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="You don't have access!")
 
+# Retrieve a single order
+@order_router.get("/order/{order_id}/")
+def get_order(order_id:int,Authorizer:AuthJWT = Depends()):
+    try:
+        Authorizer.jwt_required()
+    except Exception as e:
+        return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid Token!")
+    session = Session()
+    current_user = Authorizer.get_jwt_subject()
+    user = session.query(User).filter(User.username == current_user).first()
+    if user is None:
+        return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="User doesn't exist!")
+    order = session.query(Order).filter(Order.id == order_id).first()
+    if order is None:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Order doesn't exist!")
+    return jsonable_encoder(order)
