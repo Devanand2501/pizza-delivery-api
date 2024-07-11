@@ -11,6 +11,7 @@ order_router = APIRouter(
     tags = ["orders"]
 )
 
+# Order Home Page
 @order_router.get("/")
 def index(Authorizer:AuthJWT = Depends()):
     try:
@@ -20,6 +21,7 @@ def index(Authorizer:AuthJWT = Depends()):
                             detail={"access":"Invalid Token"})
     return "Hello, this is a home page of order router"
 
+# Put order
 @order_router.post("/put_order/")
 def put_order(order:OrderModel,Authorizer:AuthJWT=Depends()):
     try:
