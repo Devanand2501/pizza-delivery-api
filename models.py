@@ -23,7 +23,7 @@ class Order(Base):
     __tablename__ = 'order'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-
+    quantity=Column(Integer,nullable=False)
     order_statuses = (
         ('pending', 'pending'),
         ('proceed', 'proceed'),
