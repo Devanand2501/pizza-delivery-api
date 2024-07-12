@@ -26,7 +26,7 @@ def index(Authorizer:AuthJWT=Depends()):
                             content="Hello, this is a home page of auth router")
 
 # Singup Route
-@auth_router.post("/signup",status_code=status.HTTP_201_CREATED,
+@auth_router.post("/signup/",status_code=status.HTTP_201_CREATED,
                     response_description="The user has been created successfully")
 async def signup(user:SignUpModel):
     print("<" + "--"*30 + '>')
