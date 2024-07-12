@@ -98,7 +98,7 @@ async def get_order(order_id:int,Authorizer:AuthJWT = Depends()):
     return jsonable_encoder(order)
 
 # Update Order status 
-@order_router.patch("/{order_id}/status")
+@order_router.patch("/{order_id}/status/")
 async def update_order_status(order_id:int,
                                 order:OrderStatusModel,
                                 Authorizer:AuthJWT=Depends()):
@@ -136,3 +136,40 @@ async def update_order_status(order_id:int,
         status_code=status.HTTP_200_OK,
         content="Order status updated successfully!"
     )
+
+# Delete Order 
+@order_router.delete("/{order_id}/delete/")
+async def delete_order(order_id:int, Authorizer:AuthJWT=Depends()):
+    try:
+        Authorizer.jwt_required()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid Token!")
+    session = Session ()
+    current_user = Authorizer.get_jwt_subject()
+
+    user = session.query(User).filter(current_user == User.username).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User doesn't exist!"
+        )
+    if not user.is_staff:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You don't have access!"
+        )
+    
+    order_to_delete = session.query(Order).filter(order_id == Order.id).first()
+    if order_to_delete is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Order doesn't exist!"
+        )
+    session.delete(order_to_delete)
+    session.commit()
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content="Order deleted successfully!"
+    )
+    
