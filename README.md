@@ -1,6 +1,6 @@
 ## PIZZA DELIVERY API
 
-This is a REST API for a Pizza delivery service built for fun and learning with FastAPI, SQLAlchemy, and PostgreSQL. You can find the video playlist [here](https://www.youtube.com/playlist?list=PLEt8Tae2spYnLMAf8RGCNYhovIFZHVsPP).
+This is a REST API for a Pizza delivery service built for fun and learning with FastAPI, SQLAlchemy, and PostgreSQL.
 
 ## Routes to Implement
 
@@ -11,11 +11,11 @@ This is a REST API for a Pizza delivery service built for fun and learning with 
 | *POST* | `/orders/put_order/` | Place an order | All users |
 | *PUT* | `/orders/order/update/{order_id}/` | Update an order | All users |
 | *PATCH* | `/orders/{order_id}/status/` | Update order status | Superuser |
-| *DELETE* | `/orders//{order_id}/delete/` | Delete/Remove an order | All users |
+| *DELETE* | `/orders/{order_id}/delete/` | Delete/Remove an order | All users |
 | *GET* | `/orders/user/{user_id}/` | Get user's orders | All users |
 | *GET* | `/orders/all_orders/` | List all orders made | Superuser |
 | *GET* | `/orders/order/{order_id}/` | Retrieve an order | Superuser |
-| *GET* | `/orders//user/{user_id}/order/{order_id}/` | Get user's specific order | All users |
+| *GET* | `/orders/user/{user_id}/order/{order_id}/` | Get user's specific order | Superuser |
 | *GET* | `/docs/` | View API documentation | All users |
 
 ## How to Run the Project
