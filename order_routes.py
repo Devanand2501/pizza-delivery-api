@@ -97,6 +97,46 @@ async def get_order(order_id:int,Authorizer:AuthJWT = Depends()):
                             detail="Order doesn't exist!")
     return jsonable_encoder(order)
 
+# Update order
+@order_router.put("/{order_id}/update/")
+async def update_order(order_id:int,order:OrderModel,Authorizer:AuthJWT = Depends()):
+    try:
+        Authorizer.jwt_required()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid Token!")
+    session = Session ()
+    current_user = Authorizer.get_jwt_subject()
+
+    user = session.query(User).filter(current_user == User.username).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User doesn't exist!"
+        )
+    order_to_update = session.query(Order).filter(order_id == Order.id).first()
+    if order_to_update is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Order doesn't exist!"
+        )
+    
+    order_to_update.quantity = order.quantity
+    order_to_update.pizza_size = order.pizza_size
+    if order.order_status:
+        if not user.is_staff:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="You don't have access!"
+            )
+        else:
+            order_to_update.order_status = order.order_status
+    session.commit()
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content="Order status updated successfully!"
+    )
+
 # Update Order status 
 @order_router.patch("/{order_id}/status/")
 async def update_order_status(order_id:int,
