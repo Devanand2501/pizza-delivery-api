@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from database  import Session
 from models import User,Order
 from schema import OrderModel,OrderStatusModel
+from sqlalchemy import and_
 
 order_router = APIRouter(
     prefix = "/orders",
@@ -236,4 +237,29 @@ async def get_user_orders(user_id:int, Authorizer:AuthJWT=Depends()):
             detail="You don't have access!"
         )
     orders = session.query(Order).filter(user_id == Order.user_id).all()
+    return jsonable_encoder(orders)
+
+# Get specific order of specific user
+@order_router.get("/user/{user_id}/order/{order_id}/")
+async def get_user_orders(user_id:int,order_id:int, Authorizer:AuthJWT=Depends()):
+    try:
+        Authorizer.jwt_required()
+    except Exception as e:
+        return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail={"access":"Invalid Token"})
+    session = Session ()
+    current_user = Authorizer.get_jwt_subject()
+
+    user = session.query(User).filter(current_user == User.username).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User doesn't exist!"
+        )
+    if not user.is_staff:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You don't have access!"
+        )
+    orders = session.query(Order).filter(and_(Order.user_id == user_id, Order.id == order_id)).first()
     return jsonable_encoder(orders)
